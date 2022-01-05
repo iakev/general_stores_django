@@ -86,15 +86,11 @@ LOCAL_APPS = [
     "products",
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost.8080",
-#     # "http://127.0.0.1:8000",
-# ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
+    "http://localhost:3000",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
