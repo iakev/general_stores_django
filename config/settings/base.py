@@ -84,6 +84,7 @@ LOCAL_APPS = [
     "general_stores.users",
     # Your stuff: custom apps go here
     "products",
+    "sales",
 ]
 
 

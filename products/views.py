@@ -5,7 +5,7 @@ from django.http import Http404, response
 from rest_framework import serializers
 
 # from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView,RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
@@ -43,19 +43,19 @@ class ProductsList(ListAPIView):
         serializer = ProductsSerializer(self.get_queryset(),many=True)
         return Response(serializer.data)
 
-    # class CategoryProducts(ListAPIView):
-    #     """
-    #     View to list all products in specific category
-    #     """
-    #     def get_queryset(self,category_slug):
-    #         try:
-    #             queryset = self.queryset
-    #             queryset = Products.objects.filter(category__slug=category_slug) 
-    #             return queryset
-    #         except Products.DoesNotExist:
-    #             raise Http404
+class CategoryProducts(RetrieveAPIView):
+    """
+    View to list all products in specific category
+    """
+    def get_queryset(self,category_slug):
+        try:
+            queryset = self.queryset
+            queryset = Products.objects.filter(category__slug=category_slug) 
+            return queryset
+        except Products.DoesNotExist:
+            raise Http404
 
-    #     def get(self,request,category_slug,format=None):
-    #         products = self.get_queryset(category_slug)
-    #         serializer = ProductsSerializer(products,many=True)
-    #         return Response(serializer.data)
+    def get(self,request,category_slug,format=None):
+        products = self.get_queryset(category_slug)
+        serializer = ProductsSerializer(products,many=True)
+        return Response(serializer.data)

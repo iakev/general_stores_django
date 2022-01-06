@@ -5,6 +5,8 @@ from PIL import Image
 from django.core.files import File
 from django.db import models
 
+from sales.models import Sales
+
 
 
 # Create your models here.
@@ -82,3 +84,5 @@ class Products(models.Model):
 
     def get_absolute_url(self):
         return f'/{self.category.slug}/{self.slug}/'    
+
+
