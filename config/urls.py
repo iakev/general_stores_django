@@ -27,7 +27,8 @@ urlpatterns += [
     path("auth-token/", obtain_auth_token),
     path("api/v1/",include("djoser.urls")),
     path("api/v1/",include("djoser.urls.authtoken")),
-    path("api/v1/",include("products.urls"))
+    path("api/v1/",include("products.urls")),
+    path("api/v1/",include("sales.urls")),
 ]
 
 if settings.DEBUG:

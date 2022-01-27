@@ -8,6 +8,7 @@ from rest_framework import serializers
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
 from .models import Products,Category
 from .serializers import ProductsSerializer,CategorySerializer
@@ -59,3 +60,15 @@ class CategoryProducts(RetrieveAPIView):
         products = self.get_queryset(category_slug)
         serializer = ProductsSerializer(products,many=True)
         return Response(serializer.data)
+
+
+
+@api_view(['POST'])
+def search(request):
+    query = request.data.get('query','')
+
+    if query:
+        products = Products.objects.filter(Q(name__icontains=query)|Q(description__icontains=query))
+        serializer = ProductsSerializer(products,many=True)
+        return Response(serializer.data)
+    return Response({"products": []})
