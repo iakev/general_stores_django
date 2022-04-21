@@ -38,8 +38,8 @@ class ProductsSalesList(APIView):
 
 
     def post(self,request,format=None):
-        serializer = ProductSalesSerializer(data=request.data)
+        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
         if serializer.is_valid():
-            serializer.save() # current problem leads to serializers.py line number 33
+            serializer.save() 
             return Response(serializer.data)
         return Response(serializer.errors)
