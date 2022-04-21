@@ -4,6 +4,7 @@ from products.serializers import ProductsSerializer
 from .models import Sales,ProductSales,SalesStatus
 
 class ProductSalesSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = ProductSales
         fields = (
@@ -16,15 +17,14 @@ class ProductSalesSerializer(serializers.ModelSerializer):
             'price',
             'is_retail',
         )
- 
+
 
     def create(self,validated_data):
         """
         Create and return new ProductSales instance/object, given validated data
         """
-        status = SalesStatus.objects.create()
-        sale = Sales.objects.create(sales_status=status,sale_amount=0.00)
-        validated_data["sales"] = sale
+        #retrieve sale object using sale primary key and adding it to validated data dictionary
+        
         instance = ProductSales.objects.create(**validated_data)
         return instance
 
@@ -41,7 +41,7 @@ class SalesSerializer(serializers.ModelSerializer):
             'time_paid',
             'sales_status',
         )
-        
+        # depth = 1
    
 
 
