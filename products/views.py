@@ -61,6 +61,22 @@ class CategoryProducts(RetrieveAPIView):
         serializer = ProductsSerializer(products,many=True)
         return Response(serializer.data)
 
+class ProductRetrieval(APIView):
+    """
+    View to query and return product objects corresponding to a certain product id
+    """
+    def get_product(self,id,format=None):
+        try:
+            return Products.objects.get(id= id)
+        except Products.DoesNotExist:
+            raise Http404('Not found')
+
+    def get(self,request,id,format=None):
+        product = self.get_product(id)
+        serializer = ProductsSerializer(product)
+        return Response(serializer.data)
+
+
 
 
 @api_view(['POST'])
