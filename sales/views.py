@@ -29,7 +29,7 @@ class SalesList(APIView):
 
 class ProductsSalesList(APIView):
     """
-    class to list sale items/receipts to store record of previous and old sales.
+    View to list sale items/receipts to store record of previous and old sales.
     """
     def get(self,request,format=None):
         receipts = ProductSales.objects.all()
@@ -43,6 +43,23 @@ class ProductsSalesList(APIView):
             serializer.save() 
             return Response(serializer.data)
         return Response(serializer.errors)
+
+
+class ProductSalesDetailView(APIView):
+    """
+    View to get receipt information corresponding to a certain sale
+    """
+    def get_receipt(self,id,format=None):
+        try:
+            return ProductSales.objects.filter(sales_id=id)
+        
+        except ProductSales.DoesNotExist:
+            raise Http404('Not found')
+
+    def get(self,request,id,format=None):
+        receipts = self.get_receipt(id)
+        serializer = ProductSalesSerializer(receipts,many=True)
+        return Response(serializer.data)
 
 
 # view to view an individual sale item
