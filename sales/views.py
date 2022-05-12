@@ -37,14 +37,6 @@ class ProductsSalesList(APIView):
         return Response(serializer.data)
 
 
-    def post(self,request,format=None):
-        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
-        if serializer.is_valid():
-            serializer.save() 
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
-
 class ProductSalesDetailView(APIView):
     """
     View to get receipt information corresponding to a certain sale
@@ -60,6 +52,14 @@ class ProductSalesDetailView(APIView):
         receipts = self.get_receipt(id)
         serializer = ProductSalesSerializer(receipts,many=True)
         return Response(serializer.data)
+
+    def post(self,request,format=None):
+        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
+        if serializer.is_valid():
+            serializer.save() 
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
 
 
 # view to view an individual sale item
@@ -77,3 +77,17 @@ class SaleDetailView(APIView):
         sale = self.get_sale(id)
         serializer = SalesSerializer(sale)
         return Response(serializer.data)
+
+    def post(self,request,format=None):
+        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
+        if serializer.is_valid():
+            serializer.save() 
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+# need a view to create a single sale which will be passed down on to saledetailview post
+class CreateSaleView(APIView):
+    """
+    View to create a new sale
+    """
+    
