@@ -1,8 +1,10 @@
+from xmlrpc.client import INTERNAL_ERROR
 from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.conf import settings
 from django.http import Http404
 from django.db.models import Q
+from django.db import InternalError
 
 from rest_framework import status,authentication,permissions,viewsets
 from rest_framework import generics
@@ -65,7 +67,8 @@ class ProductSalesDetailView(APIView):
 # view to view an individual sale item
 class SaleDetailView(APIView):
     """
-    View to get an individual sale corresponding to given sales id
+    View to get an individual sale corresponding to given sales id and create
+    a new sale
     """
     def get_sale(self,id,format=None):
         try: 
@@ -78,16 +81,27 @@ class SaleDetailView(APIView):
         serializer = SalesSerializer(sale)
         return Response(serializer.data)
 
-    def post(self,request,format=None):
-        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
-        if serializer.is_valid():
-            serializer.save() 
-            return Response(serializer.data)
-        return Response(serializer.errors)
+
+
+        return Response(serializer.data)
 
 # need a view to create a single sale which will be passed down on to saledetailview post
 class CreateSaleView(APIView):
     """
     View to create a new sale
     """
-    
+    def create_sale(self,status,format=None):
+        try:
+            sale_status = SalesStatus.objects.get(status_name__exact=status)
+            sale = Sales.objects.create(sales_status=sale_status)
+            sale.save()
+            return sale
+        except:
+            raise InternalError
+
+    def post(self,request,format=None,*args,**kwargs): #learn about args and kwargs to change all these views to standards
+        data = request.data
+        sale = self.create_sale(data["status"])
+        serializer = SalesSerializer(sale)
+
+        return Response(serializer.data)
