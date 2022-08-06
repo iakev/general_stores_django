@@ -84,7 +84,17 @@ def search(request):
     query = request.data.get('query','')
 
     if query:
-        products = Products.objects.filter(Q(name__icontains=query)|Q(description__icontains=query))
+        products = Products.objects.filter(Q(name__icontains=query)|Q(description__icontains=query)|Q(code__icontains=query))
         serializer = ProductsSerializer(products,many=True)
         return Response(serializer.data)
     return Response({"products": []})
+
+@api_view(['POST'])
+def sale_product_search(request):
+    query = request.data.get('query','')
+
+    if query:
+        product = Products.objects.get(Q(name=query))
+        serializer = ProductsSerializer(product)
+        return Response(serializer.data)
+    return Response({"product": {}})
