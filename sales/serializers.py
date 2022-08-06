@@ -43,6 +43,14 @@ class SalesSerializer(serializers.ModelSerializer):
         )
         # depth = 1
    
+    def update(self, instance, validated_data):
+        # product_ids = validated_data.pop('products')
+        print (validated_data)
+        products = instance.products
+        print(products)
+        # instance.products = validated_data.get('products',instance.products)
+        instance.save()
+        return instance
 
 
 
