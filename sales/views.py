@@ -1,6 +1,7 @@
+from itertools import product
 from xmlrpc.client import INTERNAL_ERROR
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
 from django.db.models import Q
@@ -15,6 +16,7 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from .models import Sales,ProductSales,SalesStatus
+from  products.models import Products,Category
 from .serializers import SalesSerializer,ProductSalesSerializer
 
 
@@ -41,7 +43,7 @@ class ProductsSalesList(APIView):
 
 class ProductSalesDetailView(APIView):
     """
-    View to get receipt information corresponding to a certain sale
+    View to get receipt information corresponding to a certain sale,
     """
     def get_receipt(self,id,format=None):
         try:
@@ -55,12 +57,25 @@ class ProductSalesDetailView(APIView):
         serializer = ProductSalesSerializer(receipts,many=True)
         return Response(serializer.data)
 
-    def post(self,request,format=None):
-        serializer = ProductSalesSerializer(data=request.data) #need to call is data valid first before passing data to serializer
-        if serializer.is_valid():
-            serializer.save() 
-            return Response(serializer.data)
-        return Response(serializer.errors)
+    def create_product_sale(self,data,format=None):
+        try:
+            selected_product = data["products"]
+            created_sale = data["sales"]
+            product = Products.objects.get(id=selected_product["id"])
+            sale = Sales.objects.get(id=created_sale["id"])
+            product_sale = ProductSales.objects.create(products=product,sales=sale,quantity_sold=data["quantity_sold"],
+                            is_retail=data["is_retail"],price_per_unit_retail=product.rate_out_retail, price_per_unit_wholesale = product.rate_out_wholesale)
+            product_sale.save()
+            return product_sale
+        except:
+            raise InternalError
+
+    def post(self,request,id,format=None):
+        data = request.data
+        product_sale = self.create_product_sale(data)
+
+        serializer = ProductSalesSerializer(product_sale)
+        return Response(serializer.data)
 
 
 
@@ -83,7 +98,6 @@ class SaleDetailView(APIView):
 
 
 
-        return Response(serializer.data)
 
 # need a view to create a single sale which will be passed down on to saledetailview post
 class CreateSaleView(APIView):
@@ -105,3 +119,13 @@ class CreateSaleView(APIView):
         serializer = SalesSerializer(sale)
 
         return Response(serializer.data)
+
+    # def put(self, request, *args, **kwargs):
+    #     data = request.data
+    #     sale = get_object_or_404(Sales, pk=data["pk"])
+    #     serializer = SalesSerializer(instance=sale, data=data, partial=True)
+    #     print(serializer.initial_data)
+    #     if serializer.is_valid (raise_exception=True):
+    #         updated_sale = serializer.update()
+
+    #     return Response(updated_sale)
