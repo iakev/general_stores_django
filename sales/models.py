@@ -57,9 +57,6 @@ class ProductSales(models.Model):
                 self.price = self.price_per_unit_wholesale * self.quantity_sold
         
         #updating the total sales amount with individual prices 
-        previous_sale_amount = self.sales.sale_amount
-        decimal.Decimal(previous_sale_amount) 
-        self.sales.sale_amount = decimal.Decimal(self.price) + decimal.Decimal(previous_sale_amount) 
         self.sales.save()
         # updating product quantity as per the quantity sold
         self.products.quantity -= self.quantity_sold
