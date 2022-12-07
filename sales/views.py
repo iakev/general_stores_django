@@ -134,13 +134,3 @@ class CreateSaleView(APIView):
         serializer = SalesSerializer(sale)
 
         return Response(serializer.data)
-
-    # def put(self, request, *args, **kwargs):
-    #     data = request.data
-    #     sale = get_object_or_404(Sales, pk=data["pk"])
-    #     serializer = SalesSerializer(instance=sale, data=data, partial=True)
-    #     print(serializer.initial_data)
-    #     if serializer.is_valid (raise_exception=True):
-    #         updated_sale = serializer.update()
-
-    #     return Response(updated_sale)
