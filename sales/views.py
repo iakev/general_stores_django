@@ -73,7 +73,6 @@ class ProductSalesDetailView(APIView):
     def post(self,request,id,format=None):
         data = request.data
         product_sale = self.create_product_sale(data)
-
         serializer = ProductSalesSerializer(product_sale)
         return Response(serializer.data)
 
@@ -95,6 +94,22 @@ class SaleDetailView(APIView):
         sale = self.get_sale(id)
         serializer = SalesSerializer(sale)
         return Response(serializer.data)
+
+    def post(self, request,id, format=None):
+        """
+        Method that updates the sale amount with the total amount of sale in 
+        the database accordingly
+        """
+        sale = self.get_sale(id)
+        data = request.data
+        sale_amount = data["sale_amount"]
+        sale.sale_amount = sale_amount
+        sale.save()
+        serializer = SalesSerializer(sale)
+        return Response(serializer.data)
+
+
+
 
 
 
